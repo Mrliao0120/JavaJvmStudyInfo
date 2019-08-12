@@ -17,6 +17,7 @@ public class HeapOOM {
 
     /**
      * vm args: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError
+     * Description:  -Xms20m  堆大小 -Xmx20m 避免自动扩展 -XX:+HeapDumpOnOutOfMemoryError  出现异常内存堆换存储快照
      * @param args
      */
     public static void main(String[] args) {
