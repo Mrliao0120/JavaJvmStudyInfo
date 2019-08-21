@@ -5,8 +5,8 @@ This is  my   learn  java  language  record
 ###project:
 ----------------
   ####**liao-jvm** 
-   This project description Java Language  HotSport  info
+   The project description Java Language  HotSportJVM learn info
    
    ####**liao-concurrency** 
-   This project description Java Language  Thread  info
+   The project description Java Language  Thread learn  info
    
