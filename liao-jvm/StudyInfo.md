@@ -8,6 +8,7 @@
     **StackOverflowError 异常**
     代码路径：com.liao.jvm.oom.JavaVMStackSOF (单线程) com.liao.jvm.oom.JavaVMMulitiThering（多线程）
     在单个线程下，无论由于栈帧太大还是虚拟机栈容量太小，当内存无法分配的时候，虚拟机抛出都是StackOverflowError异常
+    
 **2.虚拟机栈和本地方法溢出**
     由于HotSport虚拟机中并不会区分虚拟机栈和本地方法栈，因此对于HotSport,虽然-Xoss参数(设置本地机栈和本地方法栈)
   但是实际上是无效的,栈容量只由-Xss参数设定。
