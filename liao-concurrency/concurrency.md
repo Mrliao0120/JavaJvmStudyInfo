@@ -48,16 +48,25 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
 
 12.Executor
 
+    Executor实现还提供了对生命周期的支持，以及信息统计，应用程序管理和性能检测机制
+
+   代码位置com.liao.concurrency.threadClass02.ExecutorThreads
+   
+   12.1位于java.util.concurrent下的Executor只有一个方法execute(Runnable command).
+   
+   12.2Executor基于生产者-消费者模式
+   
+   12.3 同时Executor还扩展了ExecutorService 来管理Executor的状态
 ​	
 
 ## 二.**携带任务结果的Callable与Future**
- **Runnable**有一定局限性，它本身是无法返回一个返回值或者抛出异常.
+ 1.**Runnable**有一定局限性，它本身是无法返回一个返回值或者抛出异常.
  
- **Executor**执行任务的四个阶段:创建，提交，开始，完成.—但是有的任务时间过长,希望提前结束任务。
+ 2.**Executor**执行任务的四个阶段:创建，提交，开始，完成.—但是有的任务时间过长,希望提前结束任务。
  
- 在**Executor**中已提交的任务可以提前取消，但对于那些已经开始执行的任务，只有它们能响应中断，才能取消。取消一个已经完成的任务是不被影响的。
+ 3.在**Executor**中已提交的任务可以提前取消，但对于那些已经开始执行的任务，只有它们能响应中断，才能取消。取消一个已经完成的任务是不被影响的。
  
- **Future**表示一个任务的生命周期，并提供了相应的方法来判断是否已经完成或取消.Future的生命周期只能前进，不能后退。
+ 4.**Future**表示一个任务的生命周期，并提供了相应的方法来判断是否已经完成或取消.Future的生命周期只能前进，不能后退。
  就像ExecutorService的生命周期一样。当某个任务完成后它就永远留在“完成”状态下。
  
        1.get方法的行为取决于任务的状态（尚未开始，正在运行，已经完成），如果已经完成那么get会立即返回或者抛出一个Exception，
@@ -70,4 +79,14 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
             1.3如果get抛出ExecutionException那么可以通过getCause来获得被封装的初始异常。
             
   ps:从某些方面异步现场操作可能达不到想要的效果,例如:一个HTML渲染,一个负责文字,一个负责图片,文字渲染早已完成,
-  但是图片渲染一直未完成 这种方式的效率和串行执行没什么差别。        
+  但是图片渲染一直未完成 这种方式的效率和串行执行没什么差别。
+  
+  5.CompletionService:Executor与BlockingQueue 
+  
+  代码位置:com.liao.concurrency.threadClass02.CompletionServiceThread
+  
+   5.1如果要提交一组任务给线程获取结果  如果使用Future的话  就要在每个Future中get 有多少任务就需要get几个，所以为了解决
+   这个问题 Java提供了**CompletionService将Executor和BlockingQueue结合在了一起**  
+    
+    
+  
