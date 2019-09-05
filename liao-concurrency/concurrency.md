@@ -38,7 +38,7 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
 
 ​	newFixedThreadPool. 将创建一个固定长度的线程池，每当提交一个任务时就创建一个线程，直到达到线程池的最大数量，这时线程池的规模将不再变化（如果某个线程由于发生未知Exception而结束，那么线程池会补充一个新线程）
 
-​	newCachedThreadPool。将创建一个缓存池，如果线程池的当前规模超过了处理需求时，那么将回收空闲线程，而当需求增加是，则可以添加新线程，线程池的规模不存在任何限制。
+​	newCachedThreadPool。将创建一个缓存池，如果线程池的当前规模超过了处理需求时，那么将回收空闲线程，而当需求增加时，则可以添加新线程，线程池的规模不存在任何限制。
 
 ​	newSingleThreadExecutor。是一个单独的线程Executor，它将创建单个工作者线程来执行任务，如果这个线程异常结束，会创建另一个线程来替代。newSingleThreadExecutor能确保任务在队列顺序来串行执行
 
@@ -87,6 +87,13 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
   
    5.1如果要提交一组任务给线程获取结果  如果使用Future的话  就要在每个Future中get 有多少任务就需要get几个，所以为了解决
    这个问题 Java提供了**CompletionService将Executor和BlockingQueue结合在了一起**  
+   
+## 三.线程中断
+   通常中断是取消线程的最合理方式
+   中断必须处理异常InterruptedException
+   1.采用标志中断
+       如果是BlockingQueue  阻塞队列，当队列满时，可能get不到标志，线程可能一直不会结束。  尽量不要使用阻塞队列
     
-    
-  
+## 线程池的使用
+   ThreadLocal 当线程本地值生命周期与线程生命周期相同时，在线程池中的线程中使用ThreadLocal才有意义。而在线程池中不应该使用改值来传递线程间的变量
+   
