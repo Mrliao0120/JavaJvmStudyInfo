@@ -1,6 +1,8 @@
 # 并发编程记录
 
-## 一 并发编程基础
+## 一.锁
+
+## 二.并发编程基础
 
 ​	1.无状态类是线程安全的  因为他们没有具体状态   线程数据不共享 每个对象都是单独的实例  所以是线程安全的。
 
@@ -8,7 +10,7 @@
 
 ​	3. BlockingQueue扩展了Queue，增加了可阻塞队列的插入和获取等操作。如果队列为空，那么获取元素的操作将一直阻塞，直到队列中出现一个可用元素。如果队列已满那么将一直阻塞，直到有多余空间。
 
-​	4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。并发下ConcurrrentHashMap size()，isEmpty()只是估计预算可能并不是当前map的真正值.
+​	4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。并发下ConcurrentHashMap size()，isEmpty()只是估计预算可能并不是当前map的真正值.
 
 5.CopyOnWriteArrayList用来替代同步List，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，在进行修改操作时，对List复制个副本进行操作。
 
@@ -38,9 +40,9 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
 
 ​	newFixedThreadPool. 将创建一个固定长度的线程池，每当提交一个任务时就创建一个线程，直到达到线程池的最大数量，这时线程池的规模将不再变化（如果某个线程由于发生未知Exception而结束，那么线程池会补充一个新线程）
 
-​	newCachedThreadPool。将创建一个缓存池，如果线程池的当前规模超过了处理需求时，那么将回收空闲线程，而当需求增加时，则可以添加新线程，线程池的规模不存在任何限制。
+   newSingleThreadExecutor。是一个单独的线程Executor，它将创建单个工作者线程来执行任务，如果这个线程异常结束，会创建另一个线程来替代。newSingleThreadExecutor能确保任务在队列顺序来串行执行
 
-​	newSingleThreadExecutor。是一个单独的线程Executor，它将创建单个工作者线程来执行任务，如果这个线程异常结束，会创建另一个线程来替代。newSingleThreadExecutor能确保任务在队列顺序来串行执行
+​	newCachedThreadPool。将创建一个缓存池，如果线程池的当前规模超过了处理需求时，那么将回收空闲线程，而当需求增加时，则可以添加新线程，线程池的规模不存在任何限制。
 
 ​	newScheduledThread。创建固定长度线程池，而且以延迟或定时的方式来执行任务，类似Timer
 
@@ -48,7 +50,7 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
 
 12.Executor
 
-    Executor实现还提供了对生命周期的支持，以及信息统计，应用程序管理和性能检测机制
+   Executor实现还提供了对生命周期的支持，以及信息统计，应用程序管理和性能检测机制
 
    代码位置com.liao.concurrency.threadClass02.ExecutorThreads
    
@@ -59,7 +61,7 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
    12.3 同时Executor还扩展了ExecutorService 来管理Executor的状态
 ​	
 
-## 二.**携带任务结果的Callable与Future**
+## 三.**携带任务结果的Callable与Future**
  1.**Runnable**有一定局限性，它本身是无法返回一个返回值或者抛出异常.
  
  2.**Executor**执行任务的四个阶段:创建，提交，开始，完成.—但是有的任务时间过长,希望提前结束任务。
@@ -69,14 +71,14 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
  4.**Future**表示一个任务的生命周期，并提供了相应的方法来判断是否已经完成或取消.Future的生命周期只能前进，不能后退。
  就像ExecutorService的生命周期一样。当某个任务完成后它就永远留在“完成”状态下。
  
-       1.get方法的行为取决于任务的状态（尚未开始，正在运行，已经完成），如果已经完成那么get会立即返回或者抛出一个Exception，
+   1.get方法的行为取决于任务的状态（尚未开始，正在运行，已经完成），如果已经完成那么get会立即返回或者抛出一个Exception，
        如果没有完成，那么get将会一直阻塞到完成。
        
-            1.1如果任务抛出异常，那么get将该异常封装为ExecutionException并重新抛出。 
+   1.1如果任务抛出异常，那么get将该异常封装为ExecutionException并重新抛出。 
             
-            1.2如果任务被取消,则抛出CancellationException。
+   1.2如果任务被取消,则抛出CancellationException。
             
-            1.3如果get抛出ExecutionException那么可以通过getCause来获得被封装的初始异常。
+   1.3如果get抛出ExecutionException那么可以通过getCause来获得被封装的初始异常。
             
   ps:从某些方面异步现场操作可能达不到想要的效果,例如:一个HTML渲染,一个负责文字,一个负责图片,文字渲染早已完成,
   但是图片渲染一直未完成 这种方式的效率和串行执行没什么差别。
@@ -88,12 +90,25 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
    5.1如果要提交一组任务给线程获取结果  如果使用Future的话  就要在每个Future中get 有多少任务就需要get几个，所以为了解决
    这个问题 Java提供了**CompletionService将Executor和BlockingQueue结合在了一起**  
    
-## 三.线程中断
+## 四.线程中断
    通常中断是取消线程的最合理方式
    中断必须处理异常InterruptedException
    1.采用标志中断
        如果是BlockingQueue  阻塞队列，当队列满时，可能get不到标志，线程可能一直不会结束。  尽量不要使用阻塞队列
     
-## 线程池的使用
-   ThreadLocal 当线程本地值生命周期与线程生命周期相同时，在线程池中的线程中使用ThreadLocal才有意义。而在线程池中不应该使用改值来传递线程间的变量
+## 五.线程池的使用
+   ThreadLocal 当线程本地值生命周期与线程生命周期相同时，在线程池中的线程中使用ThreadLocal才有意义。而在线程池中不应该使用该值来传递线程间的变量
+   计算线程大小Runtime.availableProcessors 
+    newFixedThreadPool  newSingleThreadExecutor  这两个线程池会默认使用LinkBlockingQueue无界阻塞队列。当时更为合理的资源管理策略是使用有界队列,
+   例如ArrayBlockQueue，PriorityBlockQueue(根据优先级安排任务).
+     对于非常大的无界线程池,可以通过使用SynchronousQueue来避免任务排队。只有当线程池是无界的或者可以拒绝的任务时,SynchronousQueue才有实际价值。newCachedThreadPool就是用的这个
    
+   饱和策略: 当有界队列填满时,饱和策略才发挥作用。
+   ThreadPoolExecutor的饱和策略可以通过调用setRejectedExecutionHandler来修改。
+   AbortPolicy:中止,是默认的饱和策略,该策略将抛出未检查的RejectedExecution-Exception。调用者可以捕获这个异常，然后根据需求编写自己的处理代码。
+   DiscardPolicy:会悄悄抛弃任务新的无法进行的任务。
+   DiscardOldestPolicy:会抛弃下一个将执行的任务,提交新任务  如果有优先级别的队列 将抛弃最高最优先的任务。
+   CallerRunsPolicy:不会抛弃任务,也不会抛出异常,但是会把任务回退到调用者。
+   
+   线程工厂:
+    
