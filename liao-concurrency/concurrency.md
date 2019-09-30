@@ -11,10 +11,8 @@
 ​	3. BlockingQueue扩展了Queue，增加了可阻塞队列的插入和获取等操作。如果队列为空，那么获取元素的操作将一直阻塞，直到队列中出现一个可用元素。如果队列已满那么将一直阻塞，直到有多余空间。
 
 ​	4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。并发下ConcurrentHashMap size()，isEmpty()只是估计预算可能并不是当前map的真正值.
-
-5.CopyOnWriteArrayList用来替代同步List，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，在进行修改操作时，对List复制个副本进行操作。
-
-6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。
+    5.CopyOnWriteArrayList用来替代同步List，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，在进行修改操作时，对List复制个副本进行操作。
+    6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。
 
   Deque
 
@@ -111,4 +109,34 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
    CallerRunsPolicy:不会抛弃任务,也不会抛出异常,但是会把任务回退到调用者。
    
    线程工厂:
+    每个线程池都会通过线程工厂方法ThreadFactory接口创建新线程。
+    可以通过set函数的方法来设置不让外界修改策略 unConfigurableExecutorService
+    Executor exec=Executors.newCacheThreadPool();
+    if(exec interface ThreadPoolExecutor){}
+    
+ ## 六.活跃性、性能和测试
+   哲学家问题:  5个哲学家  每个哲学家都只有一根筷子吃饭 必须拿到2根筷子才能吃饭,哲学家时而思考 时而进食，如果每个哲学家
+都抓住当前的筷子不放弃 那么就是一个死锁。
+ 如果所有线程都以固定的顺序来获得锁。那么在程序中就不会出现锁顺序死锁的问题。
+ 
+ 1.可以通过定义锁顺序来避免死锁
+    System.identityHashCode(Object);
+   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
     
