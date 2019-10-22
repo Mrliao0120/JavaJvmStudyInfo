@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @ProjectName JavaJvmStudyInfo
@@ -18,11 +20,18 @@ public class CompletionServiceThread {
 
     private  final ExecutorService excutor;
 
+    private Lock lock=new ReentrantLock();
+
     CompletionServiceThread(ExecutorService excutor){
         this.excutor=excutor;
     }
 
-    void  renderPage(CharSequence charSequence) throws ExecutionException {
+    void   renderPage(CharSequence charSequence) throws ExecutionException {
+        try {
+            lock.lockInterruptibly();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<Date>info=new ArrayList<>();
         CompletionService<Date> completionService=new ExecutorCompletionService<Date>(excutor);
         for (Date date:info) {
