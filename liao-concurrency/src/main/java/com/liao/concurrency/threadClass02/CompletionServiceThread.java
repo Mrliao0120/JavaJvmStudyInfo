@@ -27,6 +27,7 @@ public class CompletionServiceThread {
     }
 
     void   renderPage(CharSequence charSequence) throws ExecutionException {
+         
         try {
             lock.lockInterruptibly();
         } catch (InterruptedException e) {
