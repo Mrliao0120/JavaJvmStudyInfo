@@ -5,6 +5,8 @@ import com.liao.design.service.UserService;
 import com.liao.design.service.UserServiceImpl;
 import org.apache.catalina.User;
 
+import java.lang.reflect.Method;
+
 /**
  * @author lhb
  * @Title: com.liao.design
@@ -21,5 +23,15 @@ public class Test {
         userProxyInvocationHandler.setTarget(userService);
         UserService proxy = (UserService) userProxyInvocationHandler.getProxy();
         proxy.addUser();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+
+    public void   javaMethod(){
+        Method[] methods = Test.class.getMethods();
     }
 }

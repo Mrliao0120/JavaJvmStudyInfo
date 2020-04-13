@@ -8,6 +8,10 @@ public class LiaoJvmApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LiaoJvmApplication.class, args);
+
+
 	}
+
+
 
 }
