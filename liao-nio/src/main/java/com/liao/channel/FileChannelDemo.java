@@ -1,4 +1,4 @@
-package com.liao.jvm.channl;
+package com.liao.channel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
