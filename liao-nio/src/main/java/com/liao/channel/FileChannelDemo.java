@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * @ProjectName JavaJvmStudyInfo
@@ -14,7 +18,7 @@ import java.nio.channels.FileChannel;
  * @Version 1.0
  * @Description
  */
-public class FileChannelDemo {
+public class FileChannelDemo  implements Callable<String> {
 
 
 
@@ -52,10 +56,34 @@ public class FileChannelDemo {
 
 
     public static void main(String[] args) {
-        FileChannelDemo  fileChannelDemo=new FileChannelDemo();
+        /*FileChannelDemo  fileChannelDemo=new FileChannelDemo();
         File file=new File("D:\\使用说明.txt");
         fileChannelDemo.readFile(file);
+*/
+        FutureTask future=new FutureTask(new FileChannelDemo());
+        FutureTask future2=new FutureTask(new FileChannelDemo());
+        Thread thread=new Thread(future);
+        Thread thread2=new Thread(future2);
+        thread.start();
+        thread2.start();
+        try {
+            Object o = future.get();
+            Object o2 = future2.get();
+            System.out.println(o);
+            System.out.println(o2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
 
+    @Override
+    public String call() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            System.out.println(Thread.currentThread().getName()+":"+i);
+        }
+        return "liao";
+    }
 }
