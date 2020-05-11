@@ -39,7 +39,6 @@ public class FileChannelDemo {
                 //mark()与reset()方法
                 //通过调用Buffer.mark()方法，可以标记Buffer中的一个特定position。之后可以通过调用Buffer.reset()方法恢复到这个position。
             }
-
            // channel.read(allocate);
             randomAccessFile.close();
         } catch (FileNotFoundException e) {
@@ -56,7 +55,6 @@ public class FileChannelDemo {
         FileChannelDemo  fileChannelDemo=new FileChannelDemo();
         File file=new File("D:\\使用说明.txt");
         fileChannelDemo.readFile(file);
-
     }
 
 
