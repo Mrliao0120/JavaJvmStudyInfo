@@ -10,7 +10,7 @@ package com.liao.design.bridge;
 public abstract class Computer {
 
 
-    protected Brand brand;
+    private Brand brand;
 
     public Computer(Brand brand) {
         this.brand = brand;
