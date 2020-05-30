@@ -1,3 +1,6 @@
+Bean：
+BeanDefinition：bean基本信息  单例 多例
+
 FactoryBean:
     像容器注册组件 
         
