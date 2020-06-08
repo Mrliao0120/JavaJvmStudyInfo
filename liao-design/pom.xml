@@ -11,7 +11,7 @@
 	<groupId>com.liao.design</groupId>
 	<artifactId>design</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>model</name>
+	<name>liao-design</name>
 	<description>model</description>
 
 	<properties>
@@ -22,6 +22,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>3.3.0</version>
 		</dependency>
 
 		<dependency>

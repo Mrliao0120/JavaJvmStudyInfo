@@ -1,5 +1,7 @@
 package com.liao;
 
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.locks.Condition;
@@ -12,6 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @Version 1.0
  * @Description
  */
+@Component("T1")
 public class T1 extends Thread{
 
     private static ReentrantLock reentrantLock=new ReentrantLock();
