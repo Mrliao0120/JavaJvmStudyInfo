@@ -22,4 +22,6 @@ public class UserProxyCGLIBHandler implements MethodInterceptor {
         System.out.println("添加好了么");
         return result;
     }
+
+
 }
