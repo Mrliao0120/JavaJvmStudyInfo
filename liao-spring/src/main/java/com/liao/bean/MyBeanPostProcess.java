@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @Description: for MyBeanPostProcess  handle
  * @Date create in 20:27 2020/6/7
  */
-@Component
+//@Component
 public class MyBeanPostProcess implements BeanPostProcessor {
 
 
