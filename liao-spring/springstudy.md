@@ -63,3 +63,10 @@ Spring事务:
 
 
 
+
+
+BeanUtils:
+
+//获取属性
+PropertyDescriptor[] targetPds = getPropertyDescriptors(actualEditable);
+
