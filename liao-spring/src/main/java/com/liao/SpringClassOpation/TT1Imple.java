@@ -18,6 +18,10 @@ import java.lang.reflect.Proxy;
 @Component
 public class TT1Imple implements FactoryBean<TT1> {
 
+    public TT1Imple() {
+        System.out.println("TT1Imple.TT1Imple");
+    }
+
     //会返回到Spring容器中
     @Override
     public TT1 getObject() throws Exception {
