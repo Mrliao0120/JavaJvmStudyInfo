@@ -10,12 +10,15 @@ package com.liao.structire.singin;
 public class SinginListTest {
 
     public static void main(String[] args) {
+
         SingleOperation singleOperation=new SingleOperation();
-        singleOperation.add(0);
-        singleOperation.add(1);
-        singleOperation.add(2);
-        singleOperation.add(3);
-        singleOperation.add(4);
+        singleOperation.inser(0,"0" );
+        singleOperation.inser(1,"1" );
+        singleOperation.inser(2,"2" );
+        singleOperation.inser(3,"3" );
+        singleOperation.delete(2 );
+        Object o = singleOperation.get(2);
+        System.out.println(o);
         System.out.println(singleOperation);
     }
 }
