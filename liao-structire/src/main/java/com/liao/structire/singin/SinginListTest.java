@@ -16,7 +16,6 @@ public class SinginListTest {
         singleOperation.add(2);
         singleOperation.add(3);
         singleOperation.add(4);
-        singleOperation.delete(4);
         System.out.println(singleOperation);
     }
 }
