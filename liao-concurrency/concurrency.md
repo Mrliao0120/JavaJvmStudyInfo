@@ -59,13 +59,25 @@
 
 ​	2.线程中 保持原子性不太可能++i   i++操作都不会是原子性操作，因为其中操作分为读取——修改——写入。凡是存在竞态条件都不具备线程安全可行性
 
-​	3. BlockingQueue扩展了Queue，增加了可阻塞队列的插入和获取等操作。如果队列为空，那么获取元素的操作将一直阻塞，直到队列中出现一个可用元素。如果队列已满那么将一直阻塞，直到有多余空间。
+​	3. BlockingQueue扩展了Queue，增加了可阻塞队列的插入和获取等操作。如果队列为空，那么获取元素的操作将一直阻塞，
+直到队列中出现一个可用元素。如果队列已满那么将一直阻塞，直到有多余空间。非常适合用于作为数据共享的通道。
 
-​	4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。并发下ConcurrentHashMap size()，isEmpty()只是估计预算可能并不是当前map的真正值.
-    5.CopyOnWriteArrayList用来替代同步List，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，在进行修改操作时，对List复制个副本进行操作。
-    6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。
-
-  Deque
+​	4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。数据结构采用数组+链表/红黑二叉树
+   1.7版本JDK采用分段锁， 1.8版本还存在分段锁数据只是为了兼容版本  采用 CAS 和 synchronized 来保证并发安全。
+   synchronized 只锁定当前链表或红黑二叉树的首节点，这样只要 hash 不冲突，就不会产生并发，效率又提升 N 倍。
+   ![avatar](src/main/resources/concurrentHashMapSynchronized.png)
+   并发下ConcurrentHashMap size()，isEmpty()只是估计预算可能并不是当前map的真正值.
+    在并发场景下如果要保证一种可行的方式是使用 Collections.synchronizedMap() 方法来包装我们的 HashMap。
+    但这是通过使用一个全局的锁来同步不同线程间的并发访问，因此会带来不可忽视的性能问题。
+    
+    
+   
+   5.CopyOnWriteArrayList用来替代同步ArrayList，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，
+    在进行修改操作时，对List复制个副本进行操作。
+    6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。 
+    7.BlockingDeque这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，
+    8.ConcurrentSkipListMap 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。
+ 
 
    是一个双向队列，实现了在队列头和队列尾高效插入和移除，具体实现ArrayDeque和LinkedBlockingDeque。
 
