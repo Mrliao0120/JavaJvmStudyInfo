@@ -55,14 +55,14 @@
     
 ## 二.并发编程基础
 
-​	1.无状态类是线程安全的  因为他们没有具体状态   线程数据不共享 每个对象都是单独的实例  所以是线程安全的。
+###  1.无状态类是线程安全的  因为他们没有具体状态   线程数据不共享 每个对象都是单独的实例  所以是线程安全的。
 
-​	2.线程中 保持原子性不太可能++i   i++操作都不会是原子性操作，因为其中操作分为读取——修改——写入。凡是存在竞态条件都不具备线程安全可行性
+###​	2.线程中 保持原子性不太可能++i   i++操作都不会是原子性操作，因为其中操作分为读取——修改——写入。凡是存在竞态条件都不具备线程安全可行性
 
-​	3. BlockingQueue扩展了Queue，增加了可阻塞队列的插入和获取等操作。如果队列为空，那么获取元素的操作将一直阻塞，
+###	 3. BlockingQueue扩展了Queue，增加了可阻塞队列的插入和获取等操作。如果队列为空，那么获取元素的操作将一直阻塞，
 直到队列中出现一个可用元素。如果队列已满那么将一直阻塞，直到有多余空间。非常适合用于作为数据共享的通道。
 
-​	4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。数据结构采用数组+链表/红黑二叉树
+###	  4.ConcurrentHashMap也是一个基于散列的Map,但它使用了一种完全不同的加锁机制。它采用的是一种分段锁。数据结构采用数组+链表/红黑二叉树
    1.7版本JDK采用分段锁， 1.8版本还存在分段锁数据只是为了兼容版本  采用 CAS 和 synchronized 来保证并发安全。
    synchronized 只锁定当前链表或红黑二叉树的首节点，这样只要 hash 不冲突，就不会产生并发，效率又提升 N 倍。
    ![avatar](src/main/resources/concurrentHashMapSynchronized.png)
@@ -72,12 +72,111 @@
     
     
    
-   5.CopyOnWriteArrayList用来替代同步ArrayList，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，
-    在进行修改操作时，对List复制个副本进行操作。
-    6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。 
-    7.BlockingDeque这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，
-    8.ConcurrentSkipListMap 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。
- 
+###   5.CopyOnWriteArrayList用来替代同步ArrayList，在某些情况下它提供了更好的并发性能，并且在迭代期间不需要枷锁或复制，
+  在进行修改操作时，对List复制个副本进行操作。读取是完全不用加锁的，并且更厉害的是：写入也不会阻塞读取操作。
+    只有写入和写入之间需要进行同步等待。这样一来，读操作的性能就会大幅度提升。
+    读取操作没有任何同步控制和锁操作，理由就是内部数组 array 不会发生修改，只会被另外一个 array 替换，因此可以保证数据安全。
+        
+        /** The array, accessed only via getArray/setArray. */
+            private transient volatile Object[] array;
+            public E get(int index) {
+                return get(getArray(), index);
+            }
+            @SuppressWarnings("unchecked")
+            private E get(Object[] a, int index) {
+                return (E) a[index];
+            }
+            final Object[] getArray() {
+                return array;
+            }
+    
+####   5.1CopyOnWriteArrayList 写入操作的实现:
+  CopyOnWriteArrayList 写入操作 add() 方法在添加集合的时候加了锁，保证了同步，避免了多线程写的时候会 copy 出多个副本出来。
+    
+    /**
+         * Appends the specified element to the end of this list.
+         *
+         * @param e element to be appended to this list
+         * @return {@code true} (as specified by {@link Collection#add})
+         */
+        public boolean add(E e) {
+            final ReentrantLock lock = this.lock;
+            lock.lock();//加锁
+            try {
+                Object[] elements = getArray();
+                int len = elements.length;
+                Object[] newElements = Arrays.copyOf(elements, len + 1);//拷贝新数组
+                newElements[len] = e;
+                setArray(newElements);
+                return true;
+            } finally {
+                lock.unlock();//释放锁
+            }
+        }
+   
+   
+   
+###   6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。 
+###    7.BlockingDeque这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，
+  ####      7.1 ArrayBlockingQueue
+ArrayBlockingQueue 是 BlockingQueue 接口的有界队列实现类，底层采用数组来实现。ArrayBlockingQueue 一旦创建，
+            容量不能改变。其并发控制采用可重入锁来控制，不管是插入操作还是读取操作，都需要获取到锁才能进行操作。
+            当队列容量满时，尝试将元素放入队列将导致操作阻塞;尝试从一个空队列中取一个元素也会同样阻塞。
+            ArrayBlockingQueue 默认情况下不能保证线程访问队列的公平性，所谓公平性是指严格按照线程等待的绝对时间顺序，
+            即最先等待的线程能够最先访问到 ArrayBlockingQueue。而非公平性则是指访问 ArrayBlockingQueue 
+            的顺序不是遵守严格的时间顺序，有可能存在，当 ArrayBlockingQueue 可以被访问时，长时间阻塞的线程依然无法访问到
+             ArrayBlockingQueue。如果保证公平性，通常会降低吞吐量。如果需要获得公平性的 ArrayBlockingQueue，
+             可采用如下代码：
+             
+             private static ArrayBlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<Integer>(10,true);
+             
+        
+        
+####   7.2 LinkedBlockingQueue
+   LinkedBlockingQueue 底层基于单向链表实现的阻塞队列，可以当做无界队列也可以当做有界队列来使用，同样满足 FIFO 的特性，
+   与 ArrayBlockingQueue 相比起来具有更高的吞吐量，为了防止 LinkedBlockingQueue 容量迅速增，损耗大量内存。
+   通常在创建 LinkedBlockingQueue 对象时，会指定其大小，如果未指定，容量等于 Integer.MAX_VALUE。
+            
+            /**
+                 *某种意义上的无界队列
+                 * Creates a {@code LinkedBlockingQueue} with a capacity of
+                 * {@link Integer#MAX_VALUE}.
+                 */
+                public LinkedBlockingQueue() {
+                    this(Integer.MAX_VALUE);
+                }
+            
+                /**
+                 *有界队列
+                 * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
+                 *
+                 * @param capacity the capacity of this queue
+                 * @throws IllegalArgumentException if {@code capacity} is not greater
+                 *         than zero
+                 */
+                public LinkedBlockingQueue(int capacity) {
+                    if (capacity <= 0) throw new IllegalArgumentException();
+                    this.capacity = capacity;
+                    last = head = new Node<E>(null);
+                }
+   
+####   7.3 PriorityBlockingQueue
+   PriorityBlockingQueue 是一个支持优先级的无界阻塞队列。默认情况下元素采用自然顺序进行排序，
+     也可以通过自定义类实现 compareTo() 方法来指定元素排序规则，或者初始化时通过构造器参数 Comparator 来指定排序规则。
+     PriorityBlockingQueue 并发控制采用的是 ReentrantLock，队列为无界队列（ArrayBlockingQueue 是有界队列，
+     LinkedBlockingQueue 也可以通过在构造函数中传入 capacity 指定队列最大的容量，但是 PriorityBlockingQueue 
+     只能指定初始的队列大小，后面插入元素的时候，如果空间不够的话会自动扩容）。
+     简单地说，它就是 PriorityQueue 的线程安全版本。不可以插入 null 值，同时，
+     插入队列的对象必须是可比较大小的（comparable），否则报 ClassCastException 异常。它的插入操作 put 方法不会 block，
+     因为它是无界队列（take 方法在队列为空的时候会阻塞）。
+     
+####   8.ConcurrentSkipListMap 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。
+
+
+####    9.ConcurrentLinkedQueue  应该算是在高并发环境中性能最好的队列了。它之所有能有很好的性能，是因为其内部复杂的实现。
+  主要使用 CAS 非阻塞算法来实现线程安全就好了。适合在对性能要求相对较高，同时对队列的读写存在多个线程同时进行的场景，
+     即如果对队列加锁的成本较高则适合使用无锁的 ConcurrentLinkedQueue 来替代
+        
 
    是一个双向队列，实现了在队列头和队列尾高效插入和移除，具体实现ArrayDeque和LinkedBlockingDeque。
 
