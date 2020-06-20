@@ -59,6 +59,14 @@ SpringBoot自动装配：
 Spring事务:
 
 
+分布式事务:
+    应该根据不同业务场景选择不同事物解决方案:
+    强一致性：
+    最终一致性：
+        最终一致同步场景:
+        最终一致异步场景：
+        tx-lcn、seata、rocketmq、ShardingSphere
+
 
 
 

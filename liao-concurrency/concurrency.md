@@ -119,6 +119,7 @@
 ###   6.Deque和BlockingDeque 分别对Queue和BlockingQueue进行了扩展。 
 ###    7.BlockingDeque这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，
   ####      7.1 ArrayBlockingQueue
+  ArrayBlockingQueue有界缓存:不能从一个空缓存中获取缓存，也不能将元素放入缓存中。
 ArrayBlockingQueue 是 BlockingQueue 接口的有界队列实现类，底层采用数组来实现。ArrayBlockingQueue 一旦创建，
             容量不能改变。其并发控制采用可重入锁来控制，不管是插入操作还是读取操作，都需要获取到锁才能进行操作。
             当队列容量满时，尝试将元素放入队列将导致操作阻塞;尝试从一个空队列中取一个元素也会同样阻塞。
@@ -180,23 +181,23 @@ ArrayBlockingQueue 是 BlockingQueue 接口的有界队列实现类，底层采�
 
    是一个双向队列，实现了在队列头和队列尾高效插入和移除，具体实现ArrayDeque和LinkedBlockingDeque。
 
-7.闭锁    相当于一扇门  闭锁状态结束前  所有线程都需要等待 CountDownLatch  await()等待线程结束
+#### 7.闭锁    相当于一扇门  闭锁状态结束前  所有线程都需要等待 CountDownLatch  await()等待线程结束
 
 countDown()减去一个计数
 
-8.FutureTask  获取未来结果  可以在多个线程中的结果  获取到一个线程中，Executor框架中表示异步任务，此外还可以用来表示一些时间较长的计算。Future.get()来获取线程结果   在获取结果前一直阻塞。
+#### 8.FutureTask  获取未来结果  可以在多个线程中的结果  获取到一个线程中，Executor框架中表示异步任务，此外还可以用来表示一些时间较长的计算。Future.get()来获取线程结果   在获取结果前一直阻塞。
 
-9.信号量  用来控制访问某个特定资源的操作数量，或者同时执行某个指定操作的数量，或者对容器加边界Semaphore  
+#### 9.信号量  用来控制访问某个特定资源的操作数量，或者同时执行某个指定操作的数量，或者对容器加边界Semaphore  
 
 ​	.acquire()获取许可。
 
 ​	.release()释放许可。
 
-10.侧栏  侧栏类似于闭锁，它能阻塞一组线程直到某个事件发生。侧栏和闭锁的关键在于，所有线程必须同时到达侧栏位置，才能继续执行，简单来说就是等待其他线程一起到达侧栏位置  才能继续执行下一步操作。类似于公司团建  必须等待某个领导线程到齐了 才能开始下一步操作。
+#### 10.侧栏  侧栏类似于闭锁，它能阻塞一组线程直到某个事件发生。侧栏和闭锁的关键在于，所有线程必须同时到达侧栏位置，才能继续执行，简单来说就是等待其他线程一起到达侧栏位置  才能继续执行下一步操作。类似于公司团建  必须等待某个领导线程到齐了 才能开始下一步操作。
 
 CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。当有线程到达时会调用await方法 直到所有线程到达侧栏。
 
- 11.线程池策略
+ #### 11.线程池策略
 
 ​	newFixedThreadPool. 将创建一个固定长度的线程池，每当提交一个任务时就创建一个线程，直到达到线程池的最大数量，这时线程池的规模将不再变化（如果某个线程由于发生未知Exception而结束，那么线程池会补充一个新线程）
 
@@ -208,7 +209,7 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
 
 ​	newFixedThreadPool和newCachedThreadPool两个工厂方法返回通用ThreadPool-Executor实例
 
-12.Executor
+#### 12.Executor
 
    Executor实现还提供了对生命周期的支持，以及信息统计，应用程序管理和性能检测机制
 
@@ -276,24 +277,72 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
     Executor exec=Executors.newCacheThreadPool();
     if(exec interface ThreadPoolExecutor){}
     
+   ThreadPoolExecutor 类中提供的四个构造方法。我们来看最长的那个，其余三个都是在这个构造方法的基础上产生
+   
+    /**
+        * 用给定的初始参数创建一个新的ThreadPoolExecutor。
+        */
+       public ThreadPoolExecutor(int corePoolSize,//线程池的核心线程数量 最低线程
+                                 int maximumPoolSize,//线程池的最大线程数
+                                 long keepAliveTime,//当线程数大于核心线程数时，多余的空闲线程存活的最长时间
+                                 TimeUnit unit,//时间单位
+                                 BlockingQueue<Runnable> workQueue,//任务队列，用来储存等待执行任务的队列
+                                 ThreadFactory threadFactory,//线程工厂，用来创建线程，一般默认即可
+                                 RejectedExecutionHandler handler//拒绝策略，当提交的任务过多而不能及时处理时，我们可以定制策略来处理任务
+                                  ) {
+           if (corePoolSize < 0 ||
+               maximumPoolSize <= 0 ||
+               maximumPoolSize < corePoolSize ||
+               keepAliveTime < 0)
+               throw new IllegalArgumentException();
+           if (workQueue == null || threadFactory == null || handler == null)
+               throw new NullPointerException();
+           this.corePoolSize = corePoolSize;
+           this.maximumPoolSize = maximumPoolSize;
+           this.workQueue = workQueue;
+           this.keepAliveTime = unit.toNanos(keepAliveTime);
+           this.threadFactory = threadFactory;
+           this.handler = handler;
+       }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
  ## 六.活跃性、性能和测试
    哲学家问题:  5个哲学家  每个哲学家都只有一根筷子吃饭 必须拿到2根筷子才能吃饭,哲学家时而思考 时而进食，如果每个哲学家
 都抓住当前的筷子不放弃 那么就是一个死锁。
  如果所有线程都以固定的顺序来获得锁。那么在程序中就不会出现锁顺序死锁的问题。
  
- 1.可以通过定义锁顺序来避免死锁
+ ### 1.可以通过定义锁顺序来避免死锁
     System.identityHashCode(Object);
-    如果采用顺序锁,那么锁就不会存在死锁的顺序。  
-    如果持有锁调用某个外部方法，那么将出现活跃性问题。在这个外部方法中可能会获取其他锁（这可能会产生死锁），或者阻塞时间过长，
+   如果采用顺序锁,那么锁就不会存在死锁的顺序。  
+   如果持有锁调用某个外部方法，那么将出现活跃性问题。在这个外部方法中可能会获取其他锁（这可能会产生死锁），或者阻塞时间过长，
  导致其他线程无法及时获得当前被持有锁。
  
-  2.Jvm通过线程转储来帮助识别死锁的发生。
-    线程转储包括各个运行中的线程栈追踪信息
-  3.通过支持定时的锁来解决
-    显示锁可以指定定时器来还原 tryLock   当超过时间还未获取到锁 tryLock会返回一个信息
+ ### 2.Jvm通过线程转储来帮助识别死锁的发生。
+   线程转储包括各个运行中的线程栈追踪信息
+###  3.通过支持定时的锁来解决
+   显示锁可以指定定时器来还原 tryLock   当超过时间还未获取到锁 tryLock会返回一个信息
  
-  4.其他活跃性危险
-    当线程由于访问它所需的资源不能继续执行时，就会发生饥饿
+###  4.其他活跃性危险
+   当线程由于访问它所需的资源不能继续执行时，就会发生饥饿
     活锁:不断重复执行任务,但是总是失败。例如消息机制，每次失败都会被事务回滚掉,然后又被拉到开头。
  
  
@@ -303,7 +352,7 @@ CyclicBarrier可以使一定数量的参与方反复地在侧栏位置汇集。�
      
   
  ## 七.构建自定义的同步工具
-   ArrayBlockingQueue有界缓存:不能从一个空缓存中获取缓存，也不能将元素放入缓存中。
+   
    
  
  
