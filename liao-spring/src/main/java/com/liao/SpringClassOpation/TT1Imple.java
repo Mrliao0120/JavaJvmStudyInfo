@@ -15,7 +15,7 @@ import java.lang.reflect.Proxy;
  * @Version 1.0
  * @Description
  */
-@Component
+//@Component
 public class TT1Imple implements FactoryBean<TT1> {
 
     public TT1Imple() {
