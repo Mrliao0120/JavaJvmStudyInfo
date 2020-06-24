@@ -1,0 +1,33 @@
+spring:
+  shardingsphere:
+    datasource:
+      names: ds0,ds1
+      ds0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://139.199.15.231/ds_0?useSSL=FALSE&serverTimezone=GMT%2B8
+        username: root
+        password: liao1996
+      ds1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://139.199.15.231/ds_1?useSSL=FALSE&serverTimezone=GMT%2B8
+        username: root
+        password: liao1996
+    sharding:
+      tables:
+        t_order:
+          actual-data-nodes: ds$->{0..1}.t_order_$->{0..4}
+          table-strategy:
+            inline:
+              sharding-column: order_id
+              algorithm-expression: t_order_$->{order_id % 5}
+          key-generator:
+            column: order_id
+            type: SNOWFLAKE
+    props:
+      sql:
+        show: true
+mybatis:
+  type-aliases-package: com.liao.bean
+  mapper-locations: classpath:com/yingshang/dao/*.xml
