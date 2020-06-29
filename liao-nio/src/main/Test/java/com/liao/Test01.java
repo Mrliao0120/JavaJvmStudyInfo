@@ -28,7 +28,7 @@ public class Test01 {
     @Test
     public void  set(){
         TOrder tOrder=new TOrder();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             tOrder.setStatus("2");
             tOrder.setUserId(i);
             tOrderMapper.insertSelective(tOrder);
@@ -40,7 +40,7 @@ public class Test01 {
     public void  set2(){
         Example example=new Example(TOrder.class);
         Example.Criteria exampleCriteria = example.createCriteria();
-        Long id=484010215226736641L;
+        Long id=484038717351133185L;
         exampleCriteria.andEqualTo("orderId",id);
         TOrder tOrder = tOrderMapper.selectOneByExample(example);
         System.out.println(tOrder);
