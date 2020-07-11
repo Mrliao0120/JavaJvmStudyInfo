@@ -8,11 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.beans.Transient;
 
 @SpringBootApplication
-
 public class LiaoSpringApplication {
 
 	public static void main(String[] args) {
-		LiaoSpringApplication.class.notify();
 		SpringApplication.run(LiaoSpringApplication.class, args);
 	}
 
