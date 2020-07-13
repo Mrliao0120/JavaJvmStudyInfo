@@ -13,7 +13,6 @@ import java.beans.Transient;
 public class LiaoSpringApplication {
 
 	public static void main(String[] args) {
-		LiaoSpringApplication.class.notify();
 		SpringApplication.run(LiaoSpringApplication.class, args);
 	}
 
