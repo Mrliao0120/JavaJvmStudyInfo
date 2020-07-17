@@ -29,13 +29,13 @@ public class ApplicationTest {
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext  ctx = new AnnotationConfigApplicationContext(ApplicationTest.class);
-       /* MyFactoryBean bean = ctx.getBean(MyFactoryBean.class);
+        MyFactoryBean bean = ctx.getBean(MyFactoryBean.class);
         try {
             TT1 object = bean.getObject();
             System.out.println(object);
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
         ctx.close();
     }
 }
