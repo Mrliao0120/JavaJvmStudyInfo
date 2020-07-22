@@ -78,3 +78,28 @@ BeanUtils:
 //获取属性
 PropertyDescriptor[] targetPds = getPropertyDescriptors(actualEditable);
 
+
+
+1.invokeBeanFactoryPostProcessors
+
+   Set<String> processedBeans = new HashSet<>();
+    1.1判断BeanFactory
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
