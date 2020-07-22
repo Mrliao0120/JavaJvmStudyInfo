@@ -22,6 +22,8 @@ public class FileChannelDemo  implements Callable<String> {
 
 
 
+
+
     public  void  readFile(File file){
         try {
             RandomAccessFile randomAccessFile=new RandomAccessFile(file,"rw");
