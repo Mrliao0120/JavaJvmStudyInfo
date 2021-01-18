@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @ProjectName JavaJvmStudyInfo
@@ -21,7 +22,7 @@ public class collectionns {
        /* List<Integer> linkedList=new LinkedList<>();
         Collection<Integer> integers = Collections.synchronizedCollection(linkedList);
         List<Integer> list = Collections.synchronizedList(linkedList);*/
-        BlockingQueue arrayBlockingQueue=new ArrayBlockingQueue(3,true);
+      /*  BlockingQueue arrayBlockingQueue=new ArrayBlockingQueue(3,true);
 
         try {
             arrayBlockingQueue.put(1);
@@ -33,8 +34,13 @@ public class collectionns {
         arrayBlockingQueue.forEach(x->{
             System.out.println(x);
         });
-
-
+*/
+        CountDownLatch countDownLatch=new CountDownLatch(10);
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
     }
