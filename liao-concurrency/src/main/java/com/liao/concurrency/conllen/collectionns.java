@@ -4,9 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.*;
 
 /**
  * @ProjectName JavaJvmStudyInfo
@@ -35,13 +33,24 @@ public class collectionns {
             System.out.println(x);
         });
 */
-        CountDownLatch countDownLatch=new CountDownLatch(10);
+        /*CountDownLatch countDownLatch=new CountDownLatch(10);
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }*/
+
+        ExecutorService executorService= Executors.newCachedThreadPool();
+        executorService.shutdown();
+        executorService.shutdownNow();
+        try {
+            boolean b = executorService.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
+        //轮询是否关闭
+        executorService.isTerminated();
 
     }
 
