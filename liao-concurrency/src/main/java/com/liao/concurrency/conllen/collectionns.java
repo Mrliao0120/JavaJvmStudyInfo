@@ -1,9 +1,6 @@
 package com.liao.concurrency.conllen;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -40,7 +37,7 @@ public class collectionns {
             e.printStackTrace();
         }*/
 
-        ExecutorService executorService= Executors.newCachedThreadPool();
+       /* ExecutorService executorService= Executors.newCachedThreadPool();
         executorService.shutdown();
         executorService.shutdownNow();
         try {
@@ -50,7 +47,12 @@ public class collectionns {
         }
 
         //轮询是否关闭
-        executorService.isTerminated();
+        executorService.isTerminated();*/
+
+
+        List  list=new LinkedList();
+        list.add(1);
+        list.remove(1);
 
     }
 
